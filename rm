@@ -1,0 +1,9 @@
+#!/bin/bash
+
+file=$1
+
+if [ ! -d ".trash" ]; then
+    mkdir ".trash"
+fi
+
+/bin/mv "$file" ".trash/$file"
