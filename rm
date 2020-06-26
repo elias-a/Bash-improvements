@@ -1,9 +1,51 @@
 #!/bin/bash
 
-file=$1
+FILES=()
+OPTS=()
 
+# Iterate over command line args
+# Separate FILES from OPTIONS
+for arg in "$@"
+do
+    if [ "$arg" = "" ]; then break; fi
+
+    if [[ ! $arg =~ ^- ]]; then
+        FILES+=( $arg )
+    else 
+        OPTS+=( $arg )
+    fi
+done
+
+# Error checking
+FILES_MV=();
+for FILE in ${FILES[@]}
+do
+
+    # If FILE does not exist, throw error
+    if [[ ! -f $FILE && ! -d $FILE ]]; then
+        echo "Cannot remove $FILE: does not exist"
+        continue
+    fi
+
+    # If FILE is a directory and -r flag is not passed, throw error
+    if [[ -d $FILE && ! " ${OPTS[@]} " =~ " -r " ]]; then 
+         echo "Cannot remove $FILE: is a directory"
+         continue
+    fi
+
+    FILES_MV+=( $FILE )
+done 
+
+# TODO: Remove files like -foo
+
+# Create hidden trash directory in the 
+# base directory if it does not exist 
 if [ ! -d ".trash" ]; then
     mkdir ".trash"
 fi
 
-/bin/mv "$file" ".trash/$file"
+# Move files to .trash directory 
+# (instead of deleting them)
+if (( ${#FILES_MV[@]} > 0 )); then
+    /bin/mv ${FILES_MV[@]} ".trash/$file"
+fi
