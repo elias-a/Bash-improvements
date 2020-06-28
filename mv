@@ -1,16 +1,62 @@
-#!/bin/bash
+#!/bin/bash 
 
-orig=$1
-new=$2
-file=$(basename $new)
-path=$(dirname $new)
-
-if [ -f "$new" ]; then
-    if [ ! -d "$path/.trash" ]; then
-        mkdir "$path/.trash"
+# Separate SRC files from DEST file
+SRC_ARR=()
+DEST=""
+index=1
+for arg in "$@"
+do 
+    if (( $index == $# )); then
+        DEST=$arg
+        break
     fi
 
-    /bin/mv "$new" "$path/.trash/$file"
-fi
+    SRC_ARR+=( $arg )
+    let index++
+done
 
-/bin/mv "$orig" "$new"
+# Prevent overwriting 
+FILE_DEST=$(basename $DEST)
+PATH_TO_DEST=$(dirname $DEST)
+for SRC in ${SRC_ARR[@]}
+do
+    FILE=$(basename SRC)
+    DIR=$(dirname SRC)
+
+    # If DEST is a file
+    if [ -f "$FILE_DEST" ]; then
+
+        if [[ "$FILE" == "$FILE_DEST" ]]; then
+
+            # Create hidden trash directory in the 
+            # DEST directory if it does not exist 
+            if [ ! -d "$PATH_TO_DEST/.trash" ]; then
+                mkdir "$PATH_TO_DEST/.trash"
+            fi
+
+            # Move DEST file to .trash instead of overwriting
+            /bin/mv "$DEST" "$PATH_TO_DEST/.trash/$FILE_DEST"
+        fi
+
+    # If DEST is a directory
+    elif [ -d "$DEST" ]; then
+
+        mapfile -t DEST_FILES < <( ls "$DEST" )
+        for DEST_F in "${DEST_FILES[@]}"
+        do
+            if [[ "$FILE" == "$DEST_F"  ]]; then
+
+                # Create hidden trash directory in the 
+                # DEST directory if it does not exist 
+                if [ ! -d "$DEST/.trash" ]; then
+                    mkdir "$DEST/.trash"
+                fi
+
+                /bin/mv "$DEST/$DEST_F" "$DEST/.trash/$DEST_F"
+            fi
+        done
+    fi
+done
+
+# Actually move the files
+/bin/mv "${SRC_ARR[@]}" "$DEST"
