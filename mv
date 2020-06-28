@@ -20,41 +20,36 @@ FILE_DEST=$(basename $DEST)
 PATH_TO_DEST=$(dirname $DEST)
 for SRC in ${SRC_ARR[@]}
 do
-    FILE=$(basename SRC)
-    DIR=$(dirname SRC)
+    FILE=$(basename $SRC)
+    DIR=$(dirname $SRC)
 
-    # If DEST is a file
-    if [ -f "$FILE_DEST" ]; then
+    # If DEST is a file that already exists,
+    # do not overwrite it
+    if [ -f "$DEST" ]; then
 
-        if [[ "$FILE" == "$FILE_DEST" ]]; then
-
-            # Create hidden trash directory in the 
-            # DEST directory if it does not exist 
-            if [ ! -d "$PATH_TO_DEST/.trash" ]; then
-                mkdir "$PATH_TO_DEST/.trash"
-            fi
-
-            # Move DEST file to .trash instead of overwriting
-            /bin/mv "$DEST" "$PATH_TO_DEST/.trash/$FILE_DEST"
+        # Create hidden trash directory in the 
+        # DEST directory if it does not exist 
+        if [ ! -d "$PATH_TO_DEST/.trash" ]; then
+            mkdir "$PATH_TO_DEST/.trash"
         fi
+
+        # Move DEST file to .trash instead of overwriting
+        /bin/mv "$DEST" "$PATH_TO_DEST/.trash/$FILE_DEST"
 
     # If DEST is a directory
     elif [ -d "$DEST" ]; then
 
         mapfile -t DEST_FILES < <( ls "$DEST" )
-        for DEST_F in "${DEST_FILES[@]}"
-        do
-            if [[ "$FILE" == "$DEST_F"  ]]; then
+        if [[ " ${DEST_FILES[@]} " =~ " $FILE " ]]; then
 
-                # Create hidden trash directory in the 
-                # DEST directory if it does not exist 
-                if [ ! -d "$DEST/.trash" ]; then
-                    mkdir "$DEST/.trash"
-                fi
-
-                /bin/mv "$DEST/$DEST_F" "$DEST/.trash/$DEST_F"
+            # Create hidden trash directory in the 
+            # DEST directory if it does not exist 
+            if [ ! -d "$DEST/.trash" ]; then
+                mkdir "$DEST/.trash"
             fi
-        done
+
+            /bin/mv "$DEST/$FILE" "$DEST/.trash/$FILE"
+        fi
     fi
 done
 
