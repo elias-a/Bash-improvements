@@ -83,9 +83,28 @@ test2
 #      duplicate file in dir/ to dir/.trash/
 function test3 {
 
+    echo "TEST 3"
+
     prep
+    mv "test*.dat" "test/"
 
+    # 
+    if [ -f "test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    if [ -f "test1.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    if [ -f "test2.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
 
+    # 
+    if [ ! -f "test/test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    if [ ! -f "test/test1.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    if [ ! -f "test/test2.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+
+    #
+    if [ ! -d "test/.trash" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+
+    # 
+    if [ ! -f "test/.trash/test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    if [ ! -f "test/.trash/test1.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    if [ ! -f "test/.trash/test2.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
 }
 
 test3
