@@ -1,6 +1,6 @@
 #!/bin/bash
 
-### Test script for the `mv` command
+### Test script for the `cp` command
 
 t="  "
 
@@ -26,18 +26,18 @@ function prep {
     echo "test2" > "test/test2.dat"
 }
 
-# 1) Move file to another file in the same directory.
-#    - mv file1 file2
+# 1) Copy file to another file in the same directory.
+#    - cp file1 file2
 #    - If file2 exists, move file2 to .trash/file2
 function test1 {
 
     echo "TEST 1"
 
     prep
-    mv "test.dat" "test1.dat"
+    cp "test.dat" "test1.dat"
 
-    # test.dat should no longer exist
-    if [ -f "test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    # test.dat should still exist
+    if [ ! -f "test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
 
     # .trash directory should have been created 
     if [ ! -d ".trash" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
@@ -53,18 +53,18 @@ function test1 {
 test1
 
 
-# 2) Move file to another file with the same name in a different directory.
-#    - mv file1 dir/file1
+# 2) Copy file to another file with the same name in a different directory.
+#    - cp file1 dir/file1
 #    - If dir/file1 exists, move dir/file1 to dir/.trash/file1
 function test2 {
 
     echo "TEST 2"
 
     prep
-    mv "test.dat" "test/test.dat"
+    cp "test.dat" "test/test.dat"
 
-    # test.dat should no longer exist
-    if [ -f "test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    # test.dat should still exist
+    if [ ! -f "test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
 
     # test/test.dat should exist
     if [ ! -f "test/test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
@@ -79,8 +79,8 @@ function test2 {
 test2
 
 
-# 3) Move files to a directory.
-#    - mv file* dir/
+# 3) Copy files to a directory.
+#    - cp file* dir/
 #    - If any of the files exist in dir/, move the 
 #      duplicate file in dir/ to dir/.trash/
 function test3 {
@@ -88,12 +88,12 @@ function test3 {
     echo "TEST 3"
 
     prep
-    mv "test*.dat" "test/"
+    cp "test*.dat" "test/"
 
-    # None of test*.dat should exist
-    if [ -f "test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
-    if [ -f "test1.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
-    if [ -f "test2.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    # All of test*.dat should still exist
+    if [ ! -f "test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    if [ ! -f "test1.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    if [ ! -f "test2.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
 
     # All of test/test*.dat should exist
     if [ ! -f "test/test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
@@ -112,8 +112,8 @@ function test3 {
 test3
 
 
-# 4) Move a directory to another directory
-#    - mv dir1/ dir2/
+# 4) Copy a directory to another directory
+#    - cp dir1/ dir2/
 #    - If dir2/dir1/ exists, move dir2/dir1/ to
 #      dir2/.trash/dir1/
 function test4 {
@@ -122,10 +122,10 @@ function test4 {
 
     prep
     mkdir "test1/test/"
-    mv "test/" "test1/"
+    cp "test/" "test1/"
 
-    # test/ should no longer exist
-    if [ -d "test" ]; then echo "$t FAIL"; else echo "$t PASS"; fi 
+    # test/ should still exist
+    if [ ! -d "test" ]; then echo "$t FAIL"; else echo "$t PASS"; fi 
 
     # test1/test/ should exist
     if [ ! -d "test1/test" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
@@ -135,6 +135,11 @@ function test4 {
 
     # test1/.trash/test/ should exist
     if [ ! -d "test1/.trash/test" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+
+    # test/test*.dat should still exist
+    if [ ! -f "test/test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    if [ ! -f "test/test1.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
+    if [ ! -f "test/test2.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
 
     # test1/test/test*.dat should exist
     if [ ! -f "test1/test/test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi

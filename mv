@@ -1,5 +1,7 @@
 #!/bin/bash 
 
+# TODO: Needs to accept OPTIONS
+
 # Separate SRC files from DEST file
 SRC_ARR=()
 DEST=""
