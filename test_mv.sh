@@ -90,20 +90,20 @@ function test3 {
     prep
     mv "test*.dat" "test/"
 
-    # 
+    # None of test*.dat should exist
     if [ -f "test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
     if [ -f "test1.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
     if [ -f "test2.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
 
-    # 
+    # All of test/test*.dat should exist
     if [ ! -f "test/test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
     if [ ! -f "test/test1.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
     if [ ! -f "test/test2.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
 
-    #
+    # test/.trash should exist
     if [ ! -d "test/.trash" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
 
-    # 
+    # All of test/.trash/test*.dat should exist
     if [ ! -f "test/.trash/test.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
     if [ ! -f "test/.trash/test1.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
     if [ ! -f "test/.trash/test2.dat" ]; then echo "$t FAIL"; else echo "$t PASS"; fi
